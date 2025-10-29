@@ -40,7 +40,7 @@ export class UsersService {
   async findOneByEmail(email: string): Promise<User> {
     return await this.usersRepository.findOneOrFail({
       where: { email },
-      select: ['id', 'email', 'password', 'name', 'isActive'],
+      select: ['id', 'email', 'password', 'name', 'isActive', 'role'],
     });
   }
 

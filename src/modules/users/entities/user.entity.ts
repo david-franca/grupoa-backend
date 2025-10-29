@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Exclude } from 'class-transformer';
 
@@ -20,11 +20,8 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
-  @BeforeInsert()
-  async hashPassword() {
-    const saltRounds = 10;
-    this.password = await bcrypt.hash(this.password, saltRounds);
-  }
+  @Column({ default: 'user' })
+  role: string;
 
   async validatePassword(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password);
