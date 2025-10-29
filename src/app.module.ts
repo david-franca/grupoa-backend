@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { validationSchema } from './config/configuration';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { StudentsModule } from './modules/students/students.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { StudentsModule } from './modules/students/students.module';
       synchronize: true,
     }),
     StudentsModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
