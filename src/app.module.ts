@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { validationSchema } from './config/configuration';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { StudentsModule } from './modules/students/students.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
+    StudentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
