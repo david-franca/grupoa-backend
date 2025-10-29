@@ -30,11 +30,17 @@ export class UsersService {
   }
 
   async findAll(): Promise<User[]> {
-    return await this.usersRepository.find({ where: { isActive: true } });
+    return await this.usersRepository.find({
+      where: { isActive: true },
+      select: ['id', 'email', 'name', 'isActive', 'role'],
+    });
   }
 
   async findOne(id: number): Promise<User> {
-    return await this.usersRepository.findOneOrFail({ where: { id } });
+    return await this.usersRepository.findOneOrFail({
+      where: { id },
+      select: ['id', 'email', 'name', 'isActive', 'role'],
+    });
   }
 
   async findOneByEmail(email: string): Promise<User> {
@@ -44,10 +50,11 @@ export class UsersService {
     });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<void> {
     const user = await this.findOne(id);
     this.usersRepository.merge(user, updateUserDto);
-    return this.usersRepository.save(user);
+    await this.usersRepository.save(user);
+    return;
   }
 
   async remove(id: number): Promise<User> {
