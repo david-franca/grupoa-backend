@@ -1,0 +1,30 @@
+services:
+  # Serviço do Banco de Dados PostgreSQL
+  postgres-db:
+    image: postgres:16-alpine
+    container_name: grupoa-postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: david.franca02
+      POSTGRES_DB: grupoa
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: always
+
+  # Serviço do pgAdmin (GUI)
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: grupoa-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@email.com"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres-db
+    restart: always
+
+volumes:
+  postgres-data:
