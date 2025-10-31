@@ -10,6 +10,9 @@ export default class UserSeeder implements Seeder {
   ): Promise<void> {
     const repository = dataSource.getRepository(User);
 
+    const count = await repository.count();
+    if (count > 0) return;
+
     await repository.insert([
       {
         name: 'Admin User',
