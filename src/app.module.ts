@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { StudentsModule } from './modules/students/students.module';
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { EnvConfig, validationSchema } from './config/configuration';
+import { validationSchema } from './config/configuration';
+import { dataSourceOptions } from './database/data-source';
 
 @Module({
   imports: [
@@ -13,22 +14,7 @@ import { EnvConfig, validationSchema } from './config/configuration';
       isGlobal: true,
       cache: true,
     }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (
-        configService: ConfigService<Record<keyof EnvConfig, string>>,
-      ) => ({
-        type: 'postgres',
-        host: configService.get<string>('DATABASE_HOST'),
-        port: configService.get<number>('DATABASE_PORT'),
-        username: configService.get<string>('DATABASE_USER'),
-        password: configService.get<string>('DATABASE_PASSWORD'),
-        database: configService.get<string>('DATABASE_NAME'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true,
-      }),
-    }),
+    TypeOrmModule.forRoot(dataSourceOptions),
     StudentsModule,
     UsersModule,
     AuthModule,

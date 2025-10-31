@@ -1,18 +1,14 @@
-FROM node:20-alpine AS deps
-WORKDIR /usr/src/app
-COPY package.json package-lock.json* ./
-RUN npm ci --only=production
-
 FROM node:20-alpine AS builder
 WORKDIR /usr/src/app
 COPY package.json package-lock.json* ./
 RUN npm ci
 COPY . .
 RUN npm run build
+RUN npm prune --production
 
 FROM node:20-alpine AS runner
 WORKDIR /usr/src/app
-COPY --from=deps /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/dist ./dist
 EXPOSE 3000
-CMD ["node", "dist/main"]
+CMD npm run migration:run && npm run seed:run && node dist/main
