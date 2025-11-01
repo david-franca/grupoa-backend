@@ -9,6 +9,9 @@ import {
   HttpStatus,
   HttpCode,
   UseGuards,
+  Query,
+  DefaultValuePipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -17,9 +20,11 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import {
   ApiBearerAuth,
   ApiOperation,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { ParamsStudent } from './dto/params-student.dto';
 
 @ApiTags('2. Alunos')
 @ApiBearerAuth('JWT-auth')
@@ -68,31 +73,74 @@ export class StudentsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Retorna todos os alunos' })
+  @ApiOperation({ summary: 'Retorna todos os alunos paginados' })
   @ApiResponse({
     status: 200,
-    description: 'Lista de alunos retornada com sucesso.',
-    example: [
-      {
-        ra: '6597',
-        cpf: '12345678985',
-        name: 'João de Deus',
-        email: 'jdeus@escola.com.br',
-        created_at: '2025-10-28T23:50:40.550Z',
-        updated_at: '2025-10-28T23:50:40.550Z',
+    description: 'Lista de alunos paginada retornada com sucesso.',
+    example: {
+      items: [
+        {
+          ra: '6597',
+          cpf: '12345678985',
+          name: 'João de Deus',
+          email: 'jdeus@escola.com.br',
+          created_at: '2025-10-28T23:50:40.550Z',
+          updated_at: '2025-10-28T23:50:40.550Z',
+        },
+        {
+          ra: '6598',
+          cpf: '12345678965',
+          name: 'Firmino da Silva',
+          email: 'fsilva@escola.com.br',
+          created_at: '2025-10-29T22:08:43.504Z',
+          updated_at: '2025-10-29T22:08:43.504Z',
+        },
+      ],
+      meta: {
+        totalItems: 251,
+        itemCount: 10,
+        itemsPerPage: 10,
+        totalPages: 26,
+        currentPage: 1,
       },
-      {
-        ra: '6598',
-        cpf: '12345678965',
-        name: 'Firmino da Silva',
-        email: 'fsilva@escola.com.br',
-        created_at: '2025-10-29T22:08:43.504Z',
-        updated_at: '2025-10-29T22:08:43.504Z',
+      links: {
+        first: '/students?limit=10',
+        previous: '',
+        next: '/students?page=2&limit=10',
+        last: '/students?page=26&limit=10',
       },
-    ],
+    },
   })
-  findAll() {
-    return this.studentsService.findAll();
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'Busca por RA, CPF, nome ou email',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    default: 1,
+    type: Number,
+    description: 'Número da página',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    default: 10,
+    type: Number,
+    description: 'Quantidade de itens por página',
+  })
+  findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
+    @Query() { search }: ParamsStudent,
+  ) {
+    console.log('🚀 ~ StudentsController ~ findAll ~ search:', search);
+    return this.studentsService.findAll(
+      { limit, page, route: '/students' },
+      search,
+    );
   }
 
   @Get(':ra')
