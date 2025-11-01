@@ -1,4 +1,5 @@
 import {
+  IsEnum,
   IsNotEmpty,
   IsNumberString,
   IsOptional,
@@ -17,4 +18,13 @@ export class ParamsStudent {
   @IsNumberString({}, { message: 'O parâmetro "limit" deve ser um número.' })
   @IsNotEmpty({ message: 'O parâmetro "limit" é obrigatório.' })
   limit: number;
+
+  @IsString()
+  @IsOptional()
+  field: string;
+
+  @IsEnum(['asc', 'desc'])
+  @IsString()
+  @IsOptional()
+  order: string;
 }

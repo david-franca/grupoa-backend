@@ -38,22 +38,22 @@ export class StudentsService {
 
   async findAll(
     options: IPaginationOptions,
-    search?: string,
+    params: { search?: string; field?: string; order?: string },
   ): Promise<Pagination<Student>> {
-    return paginate<Student>(
-      this.studentsRepository,
-      options,
-      search
-        ? {
-            where: [
-              { ra: ILike(`%${search}%`) },
-              { cpf: ILike(`%${search}%`) },
-              { name: ILike(`%${search}%`) },
-              { email: ILike(`%${search}%`) },
-            ],
-          }
-        : {},
-    );
+    const { field, order, search } = params;
+    return paginate<Student>(this.studentsRepository, options, {
+      where: search
+        ? [
+            { ra: ILike(`%${search}%`) },
+            { cpf: ILike(`%${search}%`) },
+            { name: ILike(`%${search}%`) },
+            { email: ILike(`%${search}%`) },
+          ]
+        : undefined,
+      order: {
+        [field ? field : 'name']: order ? order : 'asc',
+      },
+    });
   }
 
   async findOne(ra: string): Promise<Student> {
