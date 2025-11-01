@@ -43,10 +43,10 @@ export class StudentsController {
 
   @Get()
   @ApiFindAllStudents()
-  findAll(@Query() { search, limit, page }: ParamsStudent) {
+  findAll(@Query() { search, limit, page, field, order }: ParamsStudent) {
     return this.studentsService.findAll(
       { limit, page, route: '/students' },
-      search,
+      { search, field, order },
     );
   }
 
