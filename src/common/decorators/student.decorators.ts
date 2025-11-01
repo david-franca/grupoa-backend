@@ -69,6 +69,19 @@ export function ApiFindAllStudents() {
         },
       },
     }),
+    ApiResponse({
+      status: 400,
+      description: 'Parâmetros de paginação inválidos.',
+      example: {
+        statusCode: 400,
+        timestamp: '2025-11-01T15:56:35.358Z',
+        path: '/students?page=2',
+        errors: [
+          'O parâmetro "limit" é obrigatório.',
+          'O parâmetro "limit" deve ser um número.',
+        ],
+      },
+    }),
     ApiQuery({
       name: 'search',
       required: false,
@@ -77,14 +90,14 @@ export function ApiFindAllStudents() {
     }),
     ApiQuery({
       name: 'page',
-      required: false,
+      required: true,
       default: 1,
       type: Number,
       description: 'Número da página',
     }),
     ApiQuery({
       name: 'limit',
-      required: false,
+      required: true,
       default: 10,
       type: Number,
       description: 'Quantidade de itens por página',

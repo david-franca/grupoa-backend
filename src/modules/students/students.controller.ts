@@ -10,8 +10,6 @@ import {
   HttpCode,
   UseGuards,
   Query,
-  DefaultValuePipe,
-  ParseIntPipe,
 } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -45,11 +43,7 @@ export class StudentsController {
 
   @Get()
   @ApiFindAllStudents()
-  findAll(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
-    @Query() { search }: ParamsStudent,
-  ) {
+  findAll(@Query() { search, limit, page }: ParamsStudent) {
     return this.studentsService.findAll(
       { limit, page, route: '/students' },
       search,
