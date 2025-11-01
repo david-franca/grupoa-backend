@@ -3,7 +3,12 @@ import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Student } from './entities/student.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
+import {
+  paginate,
+  Pagination,
+  IPaginationOptions,
+} from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class StudentsService {
@@ -31,8 +36,24 @@ export class StudentsService {
     return await this.studentsRepository.save(newStudent);
   }
 
-  async findAll(): Promise<Student[]> {
-    return await this.studentsRepository.find();
+  async findAll(
+    options: IPaginationOptions,
+    search?: string,
+  ): Promise<Pagination<Student>> {
+    return paginate<Student>(
+      this.studentsRepository,
+      options,
+      search
+        ? {
+            where: [
+              { ra: ILike(`%${search}%`) },
+              { cpf: ILike(`%${search}%`) },
+              { name: ILike(`%${search}%`) },
+              { email: ILike(`%${search}%`) },
+            ],
+          }
+        : {},
+    );
   }
 
   async findOne(ra: string): Promise<Student> {
