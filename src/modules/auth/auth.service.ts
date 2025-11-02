@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcrypt';
 import { UnauthorizedException } from '@nestjs/common';
 import { User } from '../users/entities/user.entity';
@@ -26,7 +25,7 @@ export class AuthService {
       const { password, ...result } = user;
       return result;
     }
-    // Se não bater, retornamos null (o Passport tratará como 401)
+
     return null;
   }
 
@@ -43,18 +42,6 @@ export class AuthService {
         expiresIn: this.configService.get('JWT_EXPIRATION'),
       }),
     };
-  }
-
-  async register(registerDto: RegisterDto) {
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(registerDto.password, saltRounds);
-
-    const user = await this.userService.create({
-      ...registerDto,
-      password: hashedPassword,
-    });
-
-    return this.generateToken(user);
   }
 
   async login(loginDto: LoginDto) {

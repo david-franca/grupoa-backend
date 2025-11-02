@@ -3,7 +3,13 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
+import bcrypt from 'bcrypt';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class UsersService {
@@ -13,6 +19,12 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(
+      createUserDto.password,
+      saltRounds,
+    );
+
     const { email } = createUserDto;
 
     const existingUser = await this.usersRepository.findOne({
@@ -25,14 +37,29 @@ export class UsersService {
       );
     }
 
-    const newUser = this.usersRepository.create(createUserDto);
+    const newUser = this.usersRepository.create({
+      ...createUserDto,
+      password: hashedPassword,
+    });
     return await this.usersRepository.save(newUser);
   }
 
-  async findAll(): Promise<User[]> {
-    return await this.usersRepository.find({
-      where: { isActive: true },
-      select: ['id', 'email', 'name', 'isActive', 'role'],
+  async findAll(
+    options: IPaginationOptions,
+    params: { search?: string; field?: string; order?: string },
+  ): Promise<Pagination<User>> {
+    const { field, order, search } = params;
+
+    return paginate<User>(this.usersRepository, options, {
+      where: {
+        isActive: true,
+        name: search ? ILike(`%${search}%`) : undefined,
+        email: search ? ILike(`%${search}%`) : undefined,
+      },
+      order: {
+        [field ? field : 'name']: order ? order : 'ASC',
+      },
+      select: ['id', 'email', 'name', 'role'],
     });
   }
 

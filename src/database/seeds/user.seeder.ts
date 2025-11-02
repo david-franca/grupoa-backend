@@ -15,9 +15,9 @@ export default class UserSeeder implements Seeder {
 
     await repository.insert([
       {
-        name: 'Admin User',
-        email: 'admin@example.com',
-        password: bcrypt.hashSync('hashed_password_here', 10),
+        name: 'Administrador',
+        email: 'admin@maisa.com.br',
+        password: bcrypt.hashSync('admin123', 10),
         role: 'admin',
       },
     ]);
