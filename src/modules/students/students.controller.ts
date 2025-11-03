@@ -24,12 +24,14 @@ import {
   ApiRemoveStudent,
   ApiUpdateStudent,
 } from '../../common/decorators/student.decorators';
-import { ApiUnauthorized } from 'src/common/decorators/common.decorators';
+import { ApiUnauthorized } from '../../common/decorators/common.decorators';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 
 @ApiTags('2. Alunos')
 @ApiBearerAuth('JWT-auth')
 @ApiUnauthorized('students')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('students')
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
@@ -37,6 +39,7 @@ export class StudentsController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiCreateStudent()
+  @Roles('admin')
   create(@Body() createStudentDto: CreateStudentDto) {
     return this.studentsService.create(createStudentDto);
   }
@@ -65,6 +68,7 @@ export class StudentsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':ra')
   @ApiRemoveStudent()
+  @Roles('admin')
   remove(@Param('ra') ra: string) {
     return this.studentsService.remove(ra);
   }
