@@ -25,12 +25,15 @@ import {
 import { ApiUnauthorized } from 'src/common/decorators/common.decorators';
 import { ParamsUser } from './dto/params-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 
 @ApiTags('3. Usuários')
 @ApiBearerAuth('JWT-auth')
 @ApiUnauthorized('users')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('users')
+@Roles('admin')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
   @Get()

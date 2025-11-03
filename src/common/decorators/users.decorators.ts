@@ -17,6 +17,16 @@ export function ApiFindAllUsers() {
         },
       ],
     }),
+    ApiResponse({
+      status: 403,
+      description: 'Você não tem permissão para acessar este recurso.',
+      example: {
+        statusCode: 403,
+        timestamp: '2025-11-03T03:24:02.097Z',
+        path: '/users',
+        errors: ['Você não tem permissão para acessar este recurso.'],
+      },
+    }),
   );
 }
 
@@ -44,6 +54,16 @@ export function ApiFindOneUser() {
         errors: ['O recurso solicitado não foi encontrado.'],
       },
     }),
+    ApiResponse({
+      status: 403,
+      description: 'Você não tem permissão para acessar este recurso.',
+      example: {
+        statusCode: 403,
+        timestamp: '2025-11-03T03:24:02.097Z',
+        path: '/users/4',
+        errors: ['Você não tem permissão para acessar este recurso.'],
+      },
+    }),
   );
 }
 
@@ -55,6 +75,16 @@ export function ApiUpdateUser() {
       description: 'Usuário atualizado com sucesso.',
     }),
     ApiResponse({ status: 404, description: 'Usuário não encontrado.' }),
+    ApiResponse({
+      status: 403,
+      description: 'Você não tem permissão para acessar este recurso.',
+      example: {
+        statusCode: 403,
+        timestamp: '2025-11-03T03:24:02.097Z',
+        path: '/users/4',
+        errors: ['Você não tem permissão para acessar este recurso.'],
+      },
+    }),
   );
 }
 
@@ -63,6 +93,16 @@ export function ApiRemoveUser() {
     ApiOperation({ summary: 'Remove um usuário pelo ID (inativação)' }),
     ApiResponse({ status: 204, description: 'Usuário removido com sucesso.' }),
     ApiResponse({ status: 404, description: 'Usuário não encontrado.' }),
+    ApiResponse({
+      status: 403,
+      description: 'Você não tem permissão para acessar este recurso.',
+      example: {
+        statusCode: 403,
+        timestamp: '2025-11-03T03:24:02.097Z',
+        path: '/users/4',
+        errors: ['Você não tem permissão para acessar este recurso.'],
+      },
+    }),
   );
 }
 
@@ -90,6 +130,16 @@ export function ApiCreateUser() {
         timestamp: '2025-10-29T18:56:35.547Z',
         path: '/auth/register',
         errors: ["Um usuário com o e-mail 'email@teste.com.br' já existe."],
+      },
+    }),
+    ApiResponse({
+      status: 403,
+      description: 'Você não tem permissão para acessar este recurso.',
+      example: {
+        statusCode: 403,
+        timestamp: '2025-11-03T03:24:02.097Z',
+        path: '/users',
+        errors: ['Você não tem permissão para acessar este recurso.'],
       },
     }),
   );
