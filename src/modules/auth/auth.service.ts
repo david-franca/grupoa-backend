@@ -17,7 +17,7 @@ export class AuthService {
     private configService: ConfigService<Record<keyof EnvConfig, string>>,
   ) {}
 
-  async validateUser(email: string, pass: string) {
+  validateUser = async (email: string, pass: string) => {
     const user = await this.userService.findOneByEmail(email);
 
     if (user && (await user.validatePassword(pass))) {
@@ -27,13 +27,14 @@ export class AuthService {
     }
 
     return null;
-  }
+  };
 
-  generateToken(user: User) {
+  generateToken = (user: User) => {
     const payload: JwtPayload = {
       name: user.name,
       email: user.email,
       role: user.role,
+      sub: user.id.toString(),
     };
 
     return {
@@ -42,9 +43,9 @@ export class AuthService {
         expiresIn: this.configService.get('JWT_EXPIRATION'),
       }),
     };
-  }
+  };
 
-  async login(loginDto: LoginDto) {
+  login = async (loginDto: LoginDto) => {
     const user = await this.userService.findOneByEmail(loginDto.email);
     const isPasswordValid = await bcrypt.compare(
       loginDto.password,
@@ -56,5 +57,5 @@ export class AuthService {
     }
 
     return this.generateToken(user);
-  }
+  };
 }

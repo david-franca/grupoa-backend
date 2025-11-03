@@ -17,7 +17,7 @@ export class StudentsService {
     private studentsRepository: Repository<Student>,
   ) {}
 
-  async create(createStudentDto: CreateStudentDto): Promise<Student> {
+  create = async (createStudentDto: CreateStudentDto): Promise<Student> => {
     const { ra, cpf } = createStudentDto;
 
     const existingStudent = await this.studentsRepository.findOne({
@@ -34,12 +34,12 @@ export class StudentsService {
     }
     const newStudent = this.studentsRepository.create(createStudentDto);
     return await this.studentsRepository.save(newStudent);
-  }
+  };
 
-  async findAll(
+  findAll = async (
     options: IPaginationOptions,
     params: { search?: string; field?: string; order?: string },
-  ): Promise<Pagination<Student>> {
+  ): Promise<Pagination<Student>> => {
     const { field, order, search } = params;
     return paginate<Student>(this.studentsRepository, options, {
       where: search
@@ -54,20 +54,20 @@ export class StudentsService {
         [field ? field : 'name']: order ? order : 'asc',
       },
     });
-  }
+  };
 
-  async findOne(ra: string): Promise<Student> {
+  findOne = async (ra: string): Promise<Student> => {
     return await this.studentsRepository.findOneOrFail({ where: { ra } });
-  }
+  };
 
-  async update(ra: string, updateStudentDto: UpdateStudentDto) {
+  update = async (ra: string, updateStudentDto: UpdateStudentDto) => {
     const student = await this.findOne(ra);
     this.studentsRepository.merge(student, updateStudentDto);
     return await this.studentsRepository.save(student);
-  }
+  };
 
-  async remove(ra: string) {
+  remove = async (ra: string) => {
     const student = await this.findOne(ra);
     return this.studentsRepository.remove(student);
-  }
+  };
 }
