@@ -18,7 +18,7 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  create = async (createUserDto: CreateUserDto): Promise<User> => {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(
       createUserDto.password,
@@ -42,12 +42,12 @@ export class UsersService {
       password: hashedPassword,
     });
     return await this.usersRepository.save(newUser);
-  }
+  };
 
-  async findAll(
+  findAll = async (
     options: IPaginationOptions,
     params: { search?: string; field?: string; order?: string },
-  ): Promise<Pagination<User>> {
+  ): Promise<Pagination<User>> => {
     const { field, order, search } = params;
 
     return paginate<User>(this.usersRepository, options, {
@@ -61,32 +61,32 @@ export class UsersService {
       },
       select: ['id', 'email', 'name', 'role'],
     });
-  }
+  };
 
-  async findOne(id: number): Promise<User> {
+  findOne = async (id: number): Promise<User> => {
     return await this.usersRepository.findOneOrFail({
       where: { id },
       select: ['id', 'email', 'name', 'isActive', 'role'],
     });
-  }
+  };
 
-  async findOneByEmail(email: string): Promise<User> {
+  findOneByEmail = async (email: string): Promise<User> => {
     return await this.usersRepository.findOneOrFail({
       where: { email },
       select: ['id', 'email', 'password', 'name', 'isActive', 'role'],
     });
-  }
+  };
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<void> {
+  update = async (id: number, updateUserDto: UpdateUserDto): Promise<void> => {
     const user = await this.findOne(id);
     this.usersRepository.merge(user, updateUserDto);
     await this.usersRepository.save(user);
     return;
-  }
+  };
 
-  async remove(id: number): Promise<User> {
+  remove = async (id: number): Promise<User> => {
     const user = await this.findOne(id);
     this.usersRepository.merge(user, { isActive: false });
     return this.usersRepository.save(user);
-  }
+  };
 }
